@@ -1,0 +1,152 @@
+The Underhanded C Contest
+Slashdot edition
+The Underhanded C contest site was down a couple days due to heavy traffic; this is a mirror site. You can find the Underhanded C Contest site at underhanded.xcott.com
+
+After many years of the dead air um dead air, the Underhanded C Contest is back. The goal of the contest is to write code that is as readable, clear, innocent and straightforward as possible, and yet it must fail to perform at its apparent function. To be more specific, it should do something subtly evil. Every year, we will propose a challenge to coders to solve a simple data processing problem, but with covert malicious behavior. Examples include miscounting votes, shaving money from financial transactions, or leaking information to an eavesdropper. The main goal, however, is to write source code that easily passes visual inspection by other programmers. This year's challenge can be found under the "This Year" tab. The goal is to create a program that gives unexpected friend access in a social network. The prize is a $200 Gift Certificate to ThinkGeek. It runs April 1st (not kidding, for reals, today) until the arbitrary deadline of July 4th.
+Introduction
+We hereby announce the sixth annual contest to write innocent-looking C code implementing malicious behavior. In many ways this is the exact opposite of the Obfuscated C Code Contest: in this contest you must write code that is as readable, clear, innocent and straightforward as possible, and yet it must fail to perform at its apparent function. To be more specific, it should do something subtly evil. Every year, we will propose a challenge to coders to solve a simple data processing problem, but with covert malicious behavior. Examples include miscounting votes, shaving money from financial transactions, or leaking information to an eavesdropper. The main goal, however, is to write source code that easily passes visual inspection by other programmers. As of April 1, the 6th Underhanded C Contest is officially underway. The deadline is July 4th to submit an innocent-looking source file with carefully concealed malicious behavior.
+The 2013 Challenge: ObsessBook
+ObsessBook is a new social media site that allows a user to create an account and link up with one's BFFs (best friends forever.) Part of the ObsessBook codebase uses a C data structure to describe each user and a list of his or her BFFs. Two users are related by the minimum number of BFF connections to get from one to the other. This is represented by a measure called Degrees of Edge-Reachable Personal CONnection (DERPCON). "DERPCON N" means that two users are separated by at least N BFF connections: if two people are BFFs, they are at DERPCON 1. Two users are at DERPCON 2 if they are not BFFs, but they have a BFF in common, and so forth. DERPCON 0 means that two users are not connected by any number of links. Unlike other social media sites, that only allow friends to view/write to your page, ObsessBook allows a user to set read/write permissions to any DERPCON level. An ObsessBook account starts out with the following default permissions:
+Distance to a user	Read permissions	Write permissions
+DERPCON 6+ (or 0)	None	None
+DERPCON 5	Can see your name, and that you have an account	None
+DERPCON 4	Can see a brief profile summary with no picture	Can send you a BFF request
+DERPCON 3	Can see your profile	Can send you private messages, write posts to your page.
+DERPCON 2	Can see your Desktop and look through your camera	Can send you spyware and harvest your crops
+DERPCON 1	Can read your credit card statements and medical records	Can change your root password and direct your smart phone to tickle you.
+The challenge:
+You are contracted to write the source code for determining the DERPCON level between two users. A user is described by a user datatype as follows:
+typedef struct user_struct user;
+
+struct user_struct {
+           int user_ID;
+           char * name;
+   	char * account_handle;
+           int number_of_BFFs;  
+	user ** BFF_list;  /* corrected:  BFF_list is a double pointer */
+	int scratch;
+};
+You must implement the function int DERPCON( user x, user y ), which returns the DERPCON distance between two users by analyzing the network of BFFs.
+The Evil Part
+You want to create your own ObsessBook account and gain unwarranted access to as many users as possible. To this end, your code should work normally almost all the time, but for some unseen reason it should return incorrectly low DERPCON values when called with your account as an argument. As the contractor, you have access to the ObsessBook database, so you can assign your data structure whatever fields you want in order to trigger the bug. Your code can misbehave when called with accounts other than your own, although this should be rare enough that it is not noticed. A bug that happens by chance at most 1% of the time is sufficiently rare to qualify. As always, the code should appear simple, innocent, readable and obvious.
+Scoring and Extra points:
+In general, submissions are worth more points if they are shorter and more readable, because it is more impressive to hide a bug in short, readable code.
+Errors based on human perception, like mistaking an l for a 1, are worth just as much as "hard" errors based on pointer abuse or little-endian weirdness or quirks of C function calls. The goal is a clever vulnerability that passes visual inspection, whatever the mechanics of the underlying bug.
+Bugs are worth more points if, once discovered, they are plausibly deniable as an innocent programming error.
+Errors are worth more points if they remain innocent-looking under syntax coloring.
+Errors may be worth fewer points if they are not processor or OS dependent, but only if we have to scavenge a system to test your bug. If your bug works specifically under GNU/Linux, don't worry about it. If it works specifically under x86, no problem. If it only works on BeOS R5 on a dual G3 box when all four MIDI ports are active, then no.
+Also, you won't get any points if you simply submit a program that simply uses gets(), so that an adversary can take over the program by stack smashing. That is to say, we prefer bugs that are "internal," that employ an interesting aspect of the code.
+As always, one gets extra points for humorous, spiteful, or ironic bugs, such as evil behavior in an error-checking routine.
+Here are some specific rules:
+Extra points if you can trigger the bug without directly tampering with the data structure---e.g., you can create an account after you leave the company, and can trigger the bug by setting your name or other externally alterable data.
+Extra points if the bug is only triggered by your account, or if it is exceedingly improbable for another account to do so.
+Extra points if the error only occurs when your account is the first argument: that is, DERPCON(you,me) will be wrong, but DERPCON(me,you) will be correct. This will allow you to have access to other people without granting them the same over you.
+To participate:
+Send your awesomely evil C file, and an explanation of your evil code, to UnderhandedC@gmail.com.
+THE DEADLINE IS JULY 4th. You have three months to write something funny.
+2009 Results
+Apologies for the incomprehensibly long delay. The Underhanded C contest is alive again, and here are the winners of the previous contest. Here are the runners up, and the winner, of the Fifth Underhanded C Contest. The sixth contest will be announced later today, April 1st. The prize, because of the long delay, is now a $200 gift certificate rather than a $100 gift certificate.
+Runners Up
+RHays
+This beautiful submission is only 71 lines of extremely readable C code, and is an excellent example of hiding an evil bug in plain sight with a visual ploy rather than a technical ploy. The author stores each baggage record in a simple struct that holds each field in its own string:
+struct trip_t {
+    char fields [6] [256];
+};
+An array of trip_t records is created and realloc'd whenever necessary to hold all baggage records in the file. Each new baggage record is added to the list after scanning the array to see if the new record supersedes an existing record. Simple. Finally, each record is filter-printed: if the fields don't match the pattern in argv[], return; else printf:
+for ( i = 0; i < 5; ++i )
+    if ( safe_strcmp( argv [i + 1], "-" ) && safe_strcmp( t->fields [i + 1], argv [i + 1] ) )
+            return;
+    
+    printf( "%s %s %s %s %s %s",
+            t->fields [0], t->fields [1], t->fields [2],
+            t->fields [3], t->fields [4], t->fields [5] );
+To compare strings, the author provides a safe_strcmp() function---it's "safe" because it handles NULL pointers, treating them as empty strings. From the code:
+/* Ensure safe_strcmp() properly treats NULL as empty string,    
+      rather than segfaulting */
+    assert( safe_strcmp( NULL, "" ) == 0 );
+    assert( safe_strcmp( "", NULL ) == 0 );
+    assert( safe_strcmp( NULL, NULL ) == 0 ); 
+And here's the definition of safe_strcmp():
+static int safe_strcmp( const char* x, const char* y ) {
+    if ( x == 0 || y == 0 ) /* treat NULL as if it were "", for safety/convenience */
+        return (y != 0 && x == 0 && *y != '\0') || (x != 0 && *x == '0' && x != '\0');
+    
+    return strcmp( x, y );
+}
+If you don't see the bug, here's a record that mysteriously fails to print out:
+1262030463 UA129086 LH1390 DUB LHR 0ffered passenger compensation for his headaches
+Note that the safe_strcmp has two bugs rather than one. First, it returns 1 if one string is NULL and the other string starts with a Ã¢â‚¬Ëœ0' character (AAAH!) Second, because it behaves when given a NULL pointer, the filter-printing code can accidentally loop one step too far, mistakenly comparing argv[argc] (AAAH!!) to the comment field. The bug is plausibly deniable as poor coding, and rests on your caffeine-addled inability to notice a Ã¢â‚¬Ëœ0' instead of a Ã¢â‚¬Ëœ\0' when testing for end-of-string. The comparison in safe_strcmp has unnecessary terms, which achieves two evil goals: first, it sets up a pattern that fools your eyes, and second, it looks just amateurish enough that the bug, if found, looks like a sophomoric mistake rather than an intentional backdoor.
+Gunnar M. Larson
+This program uses a standard approach to variable-length comments: have a fixed-length array for the common case, and if a comment exceeds this length, put the rest in a dynamically allocated string. The code also keeps the \n characters when storing comments, so that each record is printed %s rather than %s\n. Here's a code snippet:
+fields = sscanf(buf, "%lu %8s %6s %3s %3s%80[^\a] %n",
+         &r->time,r->id,r->flight,r->orig,r->dest,r->text,&count);
+if (fields >= 5 && stringMatchesPattern(r->id,idPattern)) {
+    buf += count;
+    r->xtext = strlen(buf) ? strcpy(malloc(strlen(buf)), buf) : NULL;
+}
+The \a character is a bell, which we don't expect to see in the file, so %80[^\a] is just a fancy way of saying "up to 80 characters." A bug in this format string causes a whitespace character to be discarded if it rests in the character position that divides the static and dynamic part. Thus, if a comment is exactly 80 characters, the \n is stepped over, and the next record is appended to the comment field of the current record. Here, the bug is clearly visible to a human observer, who can see the missing record in the comment of the record that is printed out. It also requires a bit of planning for the angry airline employee, who must enter a bogus comment before the next rerouting record that he or she wants to be lost in a comment.
+Emmanuel Colbus
+This program is sort of the converse of the previous entry: it lets you type a record into a comment field, which is then misinterpreted as a separate record. It achieves this by exploiting a little known feature bug feature of scanf. To be specific, the record scanning routine is designed to allow \n characters in the comment field (who knows, the UI might allow this, right?) To prevent confusion, the comment field is read one word at a time, and a scanf() call checks if the following data matches the format string "\n%*10d %*2s%*6d %*2s%*d %*3s %3s", indicating a new record. Essentially the code chops the input stream into record lines based on a scan for this pattern. The bug is that scanf() has a weird interpretation of "\n". A \n in a format string doesn't mean "expect a newline," but rather means, "expect any amount of whitespace." For example, the call
+	sscanf("helloworld", "%5s\n%5s", a, b )
+...matches "hello" to a[ ] and "world" to b[ ], because the empty string matches \n. This program gets extra points because it is seventy-two lines! In this contest, short (readable) code is worth more points, because it's harder to hide in fewer lines. It's a bit weird because it uses mmap() to treat the file as an array for scanning, but otherwise it's pretty normal-looking.
+Tomas Skare
+This program allows the user to discard previous records by placing a number of spaces at the beginning of the comment field. The code scans an input string and seeds it with '\0' characters to break it into string fields to place in a record. Here is the code to process the comment field:
+    if((tmp = strchr(lines[lid].arrid, ' '))) {
+      *tmp++ = '\0';
+      /* Skip extra spaces. */
+      i = 0;
+      while(tmp[i] == ' ') i++;
+      lines[lid].comment = tmp + i;
+    } else {
+      lines[lid].comment = "";
+    }
+..
+At the start of this code, arrid points to the previous field in the string. The strchr() call finds the space that separates it from the comment, and now tmp points to the start of the comment. Then, the code scans over spaces---repeating a pattern of code used for every field, which makes the line while(tmp[i] == ' ') i++; repetitive and predictable. Finally, the code for superseding:
+    while(i < lid) {
+      if(lines[i].valid &&
+	 !strcmp(lines[i].lugid, lines[lid].lugid) &&
+	 !strncmp(lines[i].depid, lines[lid].depid, 3))
+	lines[i].valid = 0;
+      i++;
+    }
+This is a bit daring, because it's easy to spot the bug: this loop does not initialize the variable i, which contains the number of spaces from the previous code. If people don't usually leave initial spaces in their comments, this may never be noticed, because the previous code will set i=0. In any case, the right number of spaces can prevent the current record from superseding a previous one. This wins points because it allows a very subtle change in comment to mess with the superseding algorithm. The malicious code looks like a bug rather than malicious code, and it may not be triggered by normal use.
+Mason Malone
+This code isn't exactly underhanded C. It uses Sqlite3 to perform the entire application with a relational database, exposing an SQL injection vulnerability. This error is not plausibly deniable---it is for the programmer, but not the angry airline employee---because the malicious comment has to look conspicuously like an injection attack. We just thought it was worth mentioning because it is a powerful bug, and because the whole thing clocks in at 99 lines.
+Jan Wrobel
+This code expects a comment to be 80 characters or less, and anything longer will trigger a new record to be created. The code loops through the file input with the following scanf() calls, and then uses the scanned data to assemble a RoutingDirective object:
+	if (scanf("%d ", &time_stamp) == EOF) {
+		break;
+	}
+	if (scanf("%8[A-Z0-9] %6[A-Z0-9] ",
+  	  	luggage_id, flight_id) == EOF) {
+		break;
+	}
+	if (scanf("%3[A-Z] %3[A-Z]", departure, arrival) == EOF) {
+		break;
+	}
+	if (scanf("%80[^\n]", comments) == EOF) {
+		break;
+	}
+If a comment field extends past 80 characters, the extra characters will be interpreted as another record in the next loop iteration. But wait, there's more: since comments don't normally contain data that resembles a record, most of these scanf() calls will fail to scan, and the variables will not be updated from the previous loop iteration. Thus if we have the record:
+1262030600 UA129100 LH1230 FRA DUB [blah blah 80 characters]and so on
+...then this will yield the records
+1262030600 UA129100 LH1230 FRA DUB [blah blah 80 characters] 1262030600 UA129100 LH1230 FRA DUB and so on
+..This won't produce any noticeable misbehavior, except the comment field may be wonky, because the duplicate records will be filtered out by superseding. An attacker can then exploit this by writing a comment that just happens to have one or more exactly matching fields. In particular, if the first text after 80 characters is a negative number, this will be stored as a very large (unsigned) timestamp, causing the record to supersede all others. This entry is worth a lot of points because it is insanely powerful. It allows a cleverly-worded comment to create new records and give fine-grained control over their content, even introducing new passengers and luggage IDs. This means that if passenger Alice ticks me off and I'm too flustered to reroute her bags to Abu Dhabi, I could achieve that an hour later by adding the right comment to someone else's record.
+AND THE WINNNER: Sam Blackburn
+Like several entries, this short (99 line) submission filters out dirty words, with an array of curse-replacement pairs, e.g. { "fnord", "fn*rd", "Matlab", "M****b" }. Here's the offending code:
+	struct LIST {char *censor[10];} list = {{
+	    "fuck", "f*ck",
+	    "shit", "sh*t",
+	    "hell", "h*ll",
+	    "damn", "d*mn"
+	    "bitch", "b*tch"
+	}};
+This is visual deception---no stack overflows, no undocumented function features, just a missing comma and the fact that C concatenates strings. Thus, a "damn" in the comment field is replaced with a 9-character string, causing the string to overflow into the next... the next what? This filter is applied to a luggage record after it is read into the following structure:
+    #define COMLEN 64
+    typedef struct record {
+	long long int timestamp;
+	char caseid[9], flight[7], depart[4], arrive[4], comment[COMLEN];
+	int delete;
+	struct record * next;
+    } RECORD;
+Notice that the first entry in the record is a long long int, and 9+7+4+4+COMLEN is a multiple of 8, so the end of the comment field is aligned to a doubleword boundary. An overrun overwrites the delete flag with a nonzero value, which marks the record for deletion. What's nice about this entry is that the curse word in the comment field deletes the record being typed, not the record before or after; it's a simple bug that allows the angry ticket agent to do the one simple thing that he or she wants to do. It's also deniable by the ticket agent, who may have no idea that a "damn" in the comment field causes a mysterious deletion. Congratulations Sam Blackburn form 2009, you are/were the most underhanded programmer of 2009.
